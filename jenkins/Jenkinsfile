@@ -1,0 +1,58 @@
+pipeline{
+    agent any           // where the build runs
+    environment{
+        IMAGE = "anant8321/sb-devops"
+        TAG = "${BUILD_NUMBER}"
+    }
+    stages{
+        // stage('github checkout'){                // Not required for SCM pipeline script
+        //     steps{
+        //         echo 'Fetching the github.'
+        //         git branch: 'main', credentialsId: 'flask-git-token-id', poll: false, 
+        //         url: 'https://github.com/anant8321/SB-app-for-Devops-.git'
+        //     }
+        // }
+        stage('Build'){
+            steps{                
+                echo 'Building Image'
+                sh 'docker build -t "$IMAGE:$TAG" -t "$IMAGE:latest" .'
+            }
+        }
+        stage('DockerHub checkout & push'){
+            steps{                
+                echo 'Push image to DockerHub...'
+
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-login-token', passwordVariable: 'DOCKERHUB_PASS', usernameVariable: 'DOCKERHUB_USER')]) {
+                    sh 'echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USER" --password-stdin'
+                    sh 'docker push "$IMAGE:$TAG"'
+                    sh 'docker push "$IMAGE:latest"'
+                }
+            }
+        }
+        // stage('Run/Deploy'){
+        //     steps{                
+        //         echo 'Run the image'
+        //         sh 'docker run -d --name SB-Devops -p 5000:5000 "$IMAGE:$TAG"'
+        //     }
+        // }
+        stage('Deploy to Kubernetes') {
+            steps {
+                sh '''
+                kubectl apply -f k8s/deployment.yml
+                kubectl apply -f k8s/service.yml
+
+                kubectl set image deployment/sb-app \
+                sb-app=$IMAGE:$TAG
+
+                kubectl rollout status deployment/sb-app
+                '''
+            }
+        }
+        stage('Testing'){
+            steps{                
+                echo 'Run here on : http://localhost:5000'
+            }
+        }
+    }
+    
+}

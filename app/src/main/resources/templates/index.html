@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpsService Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 800px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        h1 {
+            color: #2d3748;
+            margin-bottom: 10px;
+            font-size: 2em;
+        }
+
+        .subtitle {
+            color: #718096;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .status {
+            background: #f7fafc;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .status-item:last-child {
+            border-bottom: none;
+        }
+
+        .status-label {
+            font-weight: 600;
+            color: #4a5568;
+        }
+
+        .status-value {
+            font-family: 'Courier New', monospace;
+            color: #2d3748;
+            background: white;
+            padding: 4px 12px;
+            border-radius: 4px;
+        }
+
+        .endpoints {
+            margin-top: 30px;
+        }
+
+        h2 {
+            color: #2d3748;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .endpoint-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .endpoint-card {
+            background: #f7fafc;
+            border-radius: 8px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .endpoint-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            border-color: #667eea;
+        }
+
+        .endpoint-name {
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 8px;
+            font-size: 1.1em;
+        }
+
+        .endpoint-path {
+            font-family: 'Courier New', monospace;
+            color: #718096;
+            font-size: 0.9em;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75em;
+            font-weight: 600;
+            margin-top: 8px;
+        }
+
+        .badge-success {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .badge-info {
+            background: #bee3f8;
+            color: #2c5282;
+        }
+
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #e2e8f0;
+            text-align: center;
+            color: #718096;
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 1.5em;
+            }
+
+            .endpoint-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>My Operation Service</h1>
+        <p class="subtitle">Devops based Spring Boot Application</p>
+
+        <div class="status">
+            <div class="status-item">
+                <span class="status-label">Status</span>
+                <span class="status-value" id="status">Loading...</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">Version</span>
+                <span class="status-value" id="version">Loading...</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">Environment</span>
+                <span class="status-value" id="environment">Loading...</span>
+            </div>
+        </div>
+
+        <div class="endpoints">
+            <h2>Available Endpoints</h2>
+            <div class="endpoint-grid">
+                <a href="/health" class="endpoint-card" target="_blank">
+                    <div class="endpoint-name">Health</div>
+                    <div class="endpoint-path">GET /health</div>
+                    <span class="badge badge-success">ALB/K8s Liveness</span>
+                </a>
+
+                <a href="/ready" class="endpoint-card" target="_blank">
+                    <div class="endpoint-name">Ready</div>
+                    <div class="endpoint-path">GET /ready</div>
+                    <span class="badge badge-success">K8s Readiness</span>
+                </a>
+
+                <a href="/version" class="endpoint-card" target="_blank">
+                    <div class="endpoint-name">Version</div>
+                    <div class="endpoint-path">GET /version</div>
+                    <span class="badge badge-info">App Version</span>
+                </a>
+
+                <a href="/info" class="endpoint-card" target="_blank">
+                    <div class="endpoint-name">Info</div>
+                    <div class="endpoint-path">GET /info</div>
+                    <span class="badge badge-info">Application Info</span>
+                </a>
+
+                <a href="/actuator/health" class="endpoint-card" target="_blank">
+                    <div class="endpoint-name">Actuator Health</div>
+                    <div class="endpoint-path">GET /actuator/health</div>
+                    <span class="badge badge-success">Detailed Health</span>
+                </a>
+
+                <a href="/actuator/prometheus" class="endpoint-card" target="_blank">
+                    <div class="endpoint-name">Metrics</div>
+                    <div class="endpoint-path">GET /actuator/prometheus</div>
+                    <span class="badge badge-info">Prometheus</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="footer">
+            Built for my DevOps, Cloud, and Platform Engineering Projects<br>
+            • Spring Boot 4.x • Java 17 • <br>
+            Made by Anant Kumar 😎🤗
+        </div>
+    </div>
+
+    <script>
+        async function loadStatus() {
+            try {
+                const healthRes = await fetch('/health');
+                const healthText = await healthRes.text();
+                document.getElementById('status').textContent = healthText;
+
+                const versionRes = await fetch('/version');
+                const versionText = await versionRes.text();
+                document.getElementById('version').textContent = versionText;
+
+                const infoRes = await fetch('/info');
+                const infoData = await infoRes.json();
+                document.getElementById('environment').textContent = infoData.environment;
+            } catch (error) {
+                console.error('Error loading status:', error);
+                document.getElementById('status').textContent = 'Error';
+            }
+        }
+
+        loadStatus();
+    </script>
+</body>
+</html>

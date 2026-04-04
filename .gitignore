@@ -1,0 +1,16 @@
+HELP.md
+# Build output
+target/
+
+# Generated jar
+*.jar
+
+# VS Code settings
+.vscode/
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Environment
+.env

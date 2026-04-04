@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  name: sb-app-deploy
+spec:
+  replicas: 2
+  strategy: 
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      type: sb-app-pod
+  template:
+    metadata:
+      name: sb-app-pod
+      labels:
+        type: sb-app-pod
+    spec:
+      containers:
+        - name: sb-container
+          image: anant8321/sb-devops:latest
+          ports:
+            - containerPort: 5000
+
+  

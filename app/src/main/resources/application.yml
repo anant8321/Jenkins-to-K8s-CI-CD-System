@@ -1,0 +1,43 @@
+server:
+  address: 0.0.0.0
+  port: ${SERVER_PORT:5000}
+  shutdown: graceful            # When ASG terminates instance, Spring waits for existing requests to complete
+
+spring:
+  application:
+    name: ${APP_NAME:ops-service}
+  lifecycle:
+    timeout-per-shutdown-phase: ${SHUTDOWN_TIMEOUT:30s}
+    # time to wait for graceful shutdown,  Match this to K8s terminationGracePeriodSeconds (default 30s)
+
+app:        # Injected via: @Value("${app.version}") in OpsController.java
+  name: ${APP_NAME:ops-service}
+  environment: ${APP_ENV:dev}
+  version: ${APP_VERSION:1.0.1}
+
+management:     # actuator
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus     # ONLY expose these 3 endpoints
+  endpoint:     
+    health:
+      probes:           #  Enables K8s-style health probes as it
+        enabled: true   # Enable /actuator/health/liveness and /actuator/health/readiness
+  prometheus:
+    metrics:
+      export:
+        enabled: true       # Enable Prometheus metrics at /actuator/prometheus
+
+info:       # Displayed in /actuator/info
+  app:
+    name: ${app.name}
+    environment: ${app.environment}
+    version: ${app.version}
+
+logging:
+  level:
+    root: INFO          # Root logger level (ERROR, WARN, INFO, DEBUG, TRACE)
+    '[com.platform]': INFO              # Package-specific logging level
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
