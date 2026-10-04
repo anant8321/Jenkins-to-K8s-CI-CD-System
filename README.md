@@ -1,8 +1,8 @@
 # Jenkins to Kubernetes CI/CD
 
-A small DevOps project where I built an end-to-end CI/CD pipeline for a Spring Boot application using **Jenkins, Docker and Kubernetes**.
+In this project, I built an end-to-end CI/CD pipeline for a Spring Boot application using **Jenkins, Docker and Kubernetes**.
 
-The main idea is simple: whenever I push a change to GitHub, Jenkins detects it using **Poll SCM**, builds and tests the application, creates a Docker image, pushes it to Docker Hub, and finally deploys the new version to a local Kubernetes cluster running on **Minikube**.
+Here is the main idea: whenever I push a change of my Spring Boot Application to GitHub, Jenkins detects it using **Poll SCM**, builds and tests the application, creates a Docker image, pushes it to Docker Hub, and finally deploys the new version to a local Kubernetes cluster running on **Minikube**.
 
 ## Tech Stack
 
@@ -135,15 +135,13 @@ minikube service <service-name>
 
 ## What I learned
 
-This project helped me understand how **CI/CD, containerization and Kubernetes fit together in a real deployment flow** instead of treating them as separate tools.
+By this project, I practised how **CI/CD, containerization and Kubernetes fit together in a real deployment flow** instead of treating them as separate tools.
 
 The complete flow is:
 
 **Code → Build → Test → Docker Image → Docker Hub → Kubernetes Deployment**
 
 ## Future Improvements
-
-I plan to extend this project later with:
 
 - Helm for Kubernetes package management
 - Prometheus + Grafana for monitoring
